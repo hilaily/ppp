@@ -25,7 +25,14 @@ func runHTTP(addr string, dialer proxy.Dialer) error {
 			return err
 		}
 
-		go handleClientRequest(client, dialer)
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					log.Println("get panic: ", r)
+				}
+			}()
+			handleClientRequest(client, dialer)
+		}()
 	}
 }
 
